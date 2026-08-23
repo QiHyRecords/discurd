@@ -1,0 +1,113 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      build_release:
+        description: Build a signed release APK using configured repository secrets
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  android-apk:
+    name: Validate and build Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build requirements
+        run: |
+          sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;36.0.0" "ndk;27.1.12297006"
+          yes | sdkmanager --licenses
+          printf 'sdk.dir=%s\n' "$ANDROID_HOME" > android/local.properties
+
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate source
+        run: |
+          pnpm check
+          pnpm test
+          test -f android/gradlew
+          chmod +x android/gradlew
+
+      - name: Prepare signed-release keystore
+        if: github.event_name == 'workflow_dispatch' && inputs.build_release
+        env:
+          KEYSTORE_BASE64: ${{ secrets.LUMALINK_RELEASE_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.LUMALINK_RELEASE_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.LUMALINK_RELEASE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.LUMALINK_RELEASE_KEY_PASSWORD }}
+        run: |
+          test -n "$KEYSTORE_BASE64" && test -n "$STORE_PASSWORD" && test -n "$KEY_ALIAS" && test -n "$KEY_PASSWORD"
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/lumalink-release.jks
+          cat > android/keystore.properties <<EOF
+          storeFile=lumalink-release.jks
+          storePassword=$STORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+
+      - name: Build debug APK
+        if: github.event_name != 'workflow_dispatch' || !inputs.build_release
+        working-directory: android
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Build signed release APK
+        if: github.event_name == 'workflow_dispatch' && inputs.build_release
+        working-directory: android
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Upload debug APK
+        if: github.event_name != 'workflow_dispatch' || !inputs.build_release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumalink-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload signed release APK
+        if: github.event_name == 'workflow_dispatch' && inputs.build_release
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumalink-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Remove signing material
+        if: always()
+        run: rm -f android/keystore.properties android/lumalink-release.jks android/local.properties

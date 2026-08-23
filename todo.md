@@ -1,0 +1,41 @@
+# Project TODO
+
+- [x] Create the LumaLink design tokens, visual system, and reusable mobile components.
+- [x] Implement the local-first domain model, sample community data, permission evaluator, and persistent settings.
+- [x] Build the onboarding, home, inbox, conversation, thread, spaces, people, calls, search, notifications, profile, and settings flows.
+- [x] Add safe interaction feedback, semantic appearance switching, accessibility labels, and offline/pending message states.
+- [x] Prepare backend-ready Supabase types, relational SQL migrations, RLS policies, function templates, and setup documentation.
+- [x] Generate and install an original LumaLink icon across the Android and Expo branding assets.
+- [x] Add unit tests for permission logic and core repository behavior, then run quality checks.
+- [ ] Build an installable Android APK if supported by the available Expo/Gradle environment.
+- [x] Package the complete editable project source, SQL files, build guide, and available APK artifacts for delivery.
+- [x] Attempt the native debug APK build; the sandbox lacks a configured Android SDK location, so Gradle stopped before APK generation.
+- [ ] Add account creation, sign-in, password recovery, required policy acceptance, and minimum-age gate flows.
+- [ ] Add full conversation controls: create group DM, edit, delete, pin, reply, reaction picker, typing state, and retryable delivery states.
+- [ ] Add server administration flows for categories, text/voice channels, roles, permission review, members, invite details, and server settings.
+- [ ] Add friend requests, blocking, reporting, and a moderator review queue with explicit backend-bound state.
+- [x] Expand Supabase security and service artifacts for moderation, account data export/deletion, session controls, notification registration, and invite redemption.
+- [x] Extend automated domain tests and rebuild the full source package after the enhancement pass.
+- [x] Add local account, policy-acceptance, and password-recovery user interfaces with backend-bound security messaging.
+- [x] Add local friend-request management, reporting, moderation review, server administration, role hierarchy, and account-session user interfaces.
+- [x] Package the enhanced source revision with the new governance migration, server functions, and Android handoff.
+- [x] Create and deliver a fresh verified archive of the complete enhanced project source code.
+- [x] Create and deliver a verified complete development bundle over 200 MB, including installed dependencies rather than artificial padding.
+- [x] Add GitHub Actions validation and debug-APK artifact workflow with optional signed-release support.
+- [x] Document GitHub repository setup, required secrets, workflow triggers, and APK download steps.
+- [x] Package the GitHub Actions-ready project source and workflow documentation for delivery.
+- [x] Create and deliver an updated complete development bundle over 600 MB that includes the GitHub Actions APK workflow.
+- [x] Implement authenticated database-backed rate limiting across all write-heavy Supabase Edge Functions.
+- [x] Implement authorized moderation outcomes with audit logging and no 501 placeholders.
+- [x] Implement Firebase HTTP v1 push delivery with preference enforcement, invalid-token cleanup, and failure isolation.
+- [x] Add secure account-level developer/verified flags and role-derived profile badges with fixed display order.
+- [x] Add tests and setup documentation for the new backend behaviors and package a refreshed complete development bundle over 600 MB.
+- [x] Create and deliver the refreshed fixed development bundle over 600 MB with the security and badge updates included.
+- [x] Review the newly attached requirements and implement the resulting LumaLink update.
+- [x] Audit current app routes, configuration, and environment availability against the master specification and create an honest acceptance baseline.
+- [x] Remove the unused MySQL/Drizzle and starter server scaffold from the mobile project.
+- [x] Wire Supabase Auth, typed repositories, and realtime data access directly into reachable mobile screens.
+- [x] Replace local-only community, messaging, social, moderation, invite, badge, and settings flows with Supabase-backed behavior.
+- [x] Add actual notification token registration, live notification state, and documented call-provider integration boundaries.
+- [x] Remove unused sample/demo artifacts and write a top-level source manifest, acceptance checklist, and Supabase verification scripts.
+- [ ] Deliver a clean source-only project archive with no dependency bulk or unrelated starter scaffold.

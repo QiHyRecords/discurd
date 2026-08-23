@@ -1,0 +1,17 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { IconButton, MaterialCard, Pill, screenStyles } from "@/components/luma-ui";
+import { ScreenContainer } from "@/components/screen-container";
+import { useLuma, usePalette } from "@/lib/luma/context";
+
+export default function SpacesScreen() {
+  const { spaces } = useLuma();
+  const palette = usePalette();
+  const s = screenStyles(palette);
+  return <ScreenContainer className="flex-1"><View style={s.screen}><FlatList data={spaces} keyExtractor={(item) => item.id} contentContainerStyle={s.content} ListHeaderComponent={<View style={s.topRow}><View><Text style={s.title}>Spaces</Text><Text style={s.subtitle}>Your live communities from Supabase.</Text></View><IconButton icon="add" label="Create a space" onPress={() => router.push("/create-space" as never)} tone="filled" /></View>} renderItem={({ item }) => <Pressable onPress={() => router.push({ pathname: "/space/[id]", params: { id: item.id } })} accessibilityRole="button" style={({ pressed }) => [styles.space, { backgroundColor: palette.surface, borderColor: palette.border }, pressed && styles.pressed]}><View style={[styles.monogram, { backgroundColor: item.accent }]}><Text style={styles.monogramText}>{item.initials}</Text></View><View style={styles.spaceText}><View style={styles.spaceTop}><Text style={[styles.name, { color: palette.text }]}>{item.name}</Text>{item.unread ? <Pill label={`${item.unread} new`} /> : null}</View><Text numberOfLines={2} style={[styles.description, { color: palette.secondary }]}>{item.description}</Text><View style={styles.meta}><MaterialIcons name="group" size={14} color={palette.tertiary} /><Text style={[styles.metaText, { color: palette.tertiary }]}>{item.memberCount} members</Text><MaterialIcons name="chevron-right" size={17} color={palette.tertiary} style={styles.chevron} /></View></View></Pressable>} ListEmptyComponent={<MaterialCard style={[styles.discovery, { backgroundColor: palette.primarySoft, borderColor: "transparent" }]}><MaterialIcons name="add-circle-outline" size={25} color={palette.primary} /><View style={styles.discoveryText}><Text style={[styles.discoveryTitle, { color: palette.text }]}>Start your first space</Text><Text style={[styles.discoveryCopy, { color: palette.secondary }]}>Create a server to get a General category and live #general channel.</Text></View></MaterialCard>} /></View></ScreenContainer>;
+}
+
+const styles = StyleSheet.create({
+  space: { flexDirection: "row", gap: 14, padding: 15, borderWidth: StyleSheet.hairlineWidth, borderRadius: 20, marginBottom: 12 }, monogram: { height: 53, width: 53, borderRadius: 18, alignItems: "center", justifyContent: "center" }, monogramText: { color: "#FFFFFF", fontSize: 16, fontWeight: "800" }, spaceText: { flex: 1 }, spaceTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 }, name: { fontSize: 17, fontWeight: "800" }, description: { fontSize: 14, lineHeight: 20, marginTop: 5 }, meta: { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 9 }, metaText: { fontSize: 12, fontWeight: "600" }, chevron: { marginLeft: "auto" }, discovery: { marginTop: 9, padding: 16, flexDirection: "row", alignItems: "center", gap: 13 }, discoveryText: { flex: 1 }, discoveryTitle: { fontSize: 15, fontWeight: "800" }, discoveryCopy: { fontSize: 13, lineHeight: 18, marginTop: 2 }, pressed: { opacity: 0.74, transform: [{ scale: 0.985 }] },
+});
