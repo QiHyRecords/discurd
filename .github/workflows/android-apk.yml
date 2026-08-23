@@ -119,3 +119,10 @@ jobs:
       - name: Remove signing material
         if: always()
         run: rm -f android/keystore.properties android/lumalink-release.jks android/local.properties
+      
+      - name: Generate debug keystore
+        working-directory: android/app
+        run: |
+          if [ ! -f debug.keystore ]; then
+            keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+          fi
