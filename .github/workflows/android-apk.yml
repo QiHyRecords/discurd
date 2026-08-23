@@ -53,6 +53,11 @@ jobs:
           yes | sdkmanager --licenses
           printf 'sdk.dir=%s\n' "$ANDROID_HOME" > android/local.properties
 
+      - name: Write environment file
+        run: |
+          echo "EXPO_PUBLIC_SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+          echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
+
       - name: Install JavaScript dependencies
         run: pnpm install --frozen-lockfile
 
